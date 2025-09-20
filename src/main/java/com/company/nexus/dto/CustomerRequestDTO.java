@@ -10,7 +10,7 @@ public record CustomerRequestDTO(
         String firstName,
 
         @NotBlank(message = "Last name cannot be blank")
-        @Size(min = 2, max = 100, message = "Lasts name must be between 2 and 100 characters")
+        @Size(min = 2, max = 100, message = "Last name must be between 2 and 100 characters")
         String lastName,
 
         @NotBlank(message = "Email cannot be blank")

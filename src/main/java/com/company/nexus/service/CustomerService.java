@@ -24,14 +24,8 @@ public class CustomerService {
             throw new IllegalArgumentException("Customer with email " + requestDTO.email() + " already exists.");
         }
 
-        // Mapeamento de DTO para Entidade
         Customer customer = new Customer();
-        customer.setFirstName(requestDTO.firstName());
-        customer.setLastName(requestDTO.lastName());
-        customer.setEmail(requestDTO.email());
-        customer.setPhone(requestDTO.phone());
-        customer.setAddress(requestDTO.address());
-
+        mapDtoToEntity(requestDTO, customer);
         Customer savedCustomer = customerRepository.save(customer);
 
         return new CustomerResponseDTO(savedCustomer);
@@ -47,32 +41,40 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public CustomerResponseDTO getCustomerById(Long id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+        Customer customer = findCustomerById(id);
+
         return new CustomerResponseDTO(customer);
     }
 
     @Transactional
     public CustomerResponseDTO updateCustomer(Long id, CustomerRequestDTO requestDTO) {
-        Customer existingCustomer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
-
-        // Mapeia os novos dados do DTO para a entidade existente.
-        existingCustomer.setFirstName(requestDTO.firstName());
-        existingCustomer.setLastName(requestDTO.lastName());
-        existingCustomer.setEmail(requestDTO.email());
-        existingCustomer.setPhone(requestDTO.phone());
-        existingCustomer.setAddress(requestDTO.address());
-
+        Customer existingCustomer = findCustomerById(id);
+        mapDtoToEntity(requestDTO, existingCustomer);
         Customer updatedCustomer = customerRepository.save(existingCustomer);
+
         return new CustomerResponseDTO(updatedCustomer);
     }
 
     @Transactional
     public void deleteCustomer(Long id) {
-        if (!customerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Customer not found with id: " + id);
-        }
+        findCustomerById(id);
         customerRepository.deleteById(id);
+    }
+
+    private Customer findCustomerById(Long id) {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + id));
+    }
+
+    /**
+     * Mapeia os dados de um CustomerRequestDTO para uma entidade Customer.
+     * Centraliza a lógica de conversão de DTO para Entidade.
+     */
+    private void mapDtoToEntity(CustomerRequestDTO dto, Customer customer) {
+        customer.setFirstName(dto.firstName());
+        customer.setLastName(dto.lastName());
+        customer.setEmail(dto.email());
+        customer.setPhone(dto.phone());
+        customer.setAddress(dto.address());
     }
 }
