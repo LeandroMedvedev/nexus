@@ -13,7 +13,7 @@ public record CustomerResponseDTO(
     public CustomerResponseDTO(Customer customer) {
         this(
                 customer.getId(),
-                customer.getFirstname(),
+                customer.getFirstName(),
                 customer.getLastName(),
                 customer.getEmail(),
                 customer.getPhone(),
