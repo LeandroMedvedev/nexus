@@ -5,7 +5,6 @@ import com.company.nexus.dto.ProductResponseDTO;
 import com.company.nexus.model.Product;
 import com.company.nexus.model.Supplier;
 import com.company.nexus.repository.ProductRepository;
-import com.company.nexus.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final SupplierRepository supplierRepository;
+    private final SupplierService supplierService;
 
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO requestDTO) {
@@ -27,7 +26,7 @@ public class ProductService {
             throw new IllegalArgumentException("Product with SKU " + requestDTO.sku() + " already exists.");
         }
 
-        Supplier supplier = findSupplierById(requestDTO.supplierId());  // Fornecedor existe?
+        Supplier supplier = supplierService.findSupplierById(requestDTO.supplierId());  // Fornecedor existe?
         Product product = new Product();
         mapDtoToEntity(requestDTO, product, supplier);
         Product savedProduct = productRepository.save(product);
@@ -53,7 +52,7 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO updateProduct(Long id, ProductRequestDTO requestDTO) {
         Product existingProduct = findProductById(id);
-        Supplier existingSupplier = findSupplierById(requestDTO.supplierId());
+        Supplier existingSupplier = supplierService.findSupplierById(requestDTO.supplierId());
 
         mapDtoToEntity(requestDTO, existingProduct, existingSupplier);
         Product updatedProduct = productRepository.save(existingProduct);
@@ -70,11 +69,6 @@ public class ProductService {
     private Product findProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
-    }
-
-    private Supplier findSupplierById(Long id) {
-        return supplierRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Supplier not found with id: " + id));
     }
 
     private void mapDtoToEntity(ProductRequestDTO dto, Product product, Supplier supplier) {

@@ -61,7 +61,7 @@ public class SupplierService {
         supplierRepository.delete(supplierToDelete);
     }
 
-    private Supplier findSupplierById(Long id) {
+    public Supplier findSupplierById(Long id) {
         return supplierRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Supplier not found with id: " + id));
     }
