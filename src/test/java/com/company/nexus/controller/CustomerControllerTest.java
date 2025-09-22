@@ -36,7 +36,13 @@ class CustomerControllerTest {
     @DisplayName("Deve criar um cliente com sucesso e retornar status 201")
     void createCustomer_withValidData_shouldReturnCreated() throws Exception {
         // Arrange
-        var requestDTO = new CustomerRequestDTO("Carrie", "Heffernan", "heffernancarrie@sitcom.com", "500742399", "456 Oak Avenue");
+        var requestDTO = new CustomerRequestDTO(
+                "Carrie",
+                "Heffernan",
+                "heffernancarrie@sitcom.com",
+                "500742399",
+                "456 Oak Avenue"
+        );
 
         // Act
         ResultActions result = mockMvc.perform(post("/api/v1/customers")
@@ -57,7 +63,14 @@ class CustomerControllerTest {
     @DisplayName("Deve retornar um cliente pelo ID quando o ID existir")
     void getCustomerById_whenIdExists_shouldReturnCustomer() throws Exception {
         // Arrange: Salva um cliente no banco para que possamos buscá-lo.
-        Customer savedCustomer = customerRepository.save(new Customer(null, "Doug", "Heffernan", "heffernandoug@sitcom.com", "300578992", "456 Oak Avenue"));
+        Customer savedCustomer = customerRepository.save(new Customer(
+                null,
+                "Doug",
+                "Heffernan",
+                "heffernandoug@sitcom.com",
+                "300578992",
+                "456 Oak Avenue"
+        ));
 
         // Act & Assert
         mockMvc.perform(get("/api/v1/customers/{id}", savedCustomer.getId()))
@@ -86,8 +99,16 @@ class CustomerControllerTest {
     @DisplayName("Deve atualizar um cliente com sucesso e retornar status 200")
     void updateCustomer_withValidData_shouldReturnOk() throws Exception {
         // Arrange
-        Customer existingCustomer = customerRepository.save(new Customer(null, "Old", "Name", "old@example.com", "111", "Old Address"));
-        var requestDTO = new CustomerRequestDTO("New", "Name", "new@example.com", "222", "New Address");
+        Customer existingCustomer = customerRepository.save(new Customer(
+                null,
+                "Old",
+                "Name",
+                "old@example.com",
+                "111",
+                "Old Address"));
+        var requestDTO = new CustomerRequestDTO(
+                "New", "Name", "new@example.com", "222", "New Address"
+        );
 
         // Act
         ResultActions result = mockMvc.perform(put("/api/v1/customers/{id}", existingCustomer.getId())
@@ -104,9 +125,14 @@ class CustomerControllerTest {
     @DisplayName("Deve deletar um cliente com sucesso e retornar status 204")
     void deleteCustomer_whenIdExists_shouldReturnNoContent() throws Exception {
         // Arrange
-        Customer customerToDelete = customerRepository.save(new Customer(null, "ToDelete", "User", "todelete@example.com", "333", "Anywhere"));
+        Customer customerToDelete = customerRepository.save(new Customer(
+                null,
+                "ToDelete",
+                "User",
+                "todelete@example.com",
+                "333", "Anywhere"
+        ));
 
-        // Act & Assert
         mockMvc.perform(delete("/api/v1/customers/{id}", customerToDelete.getId()))
                 .andExpect(status().isNoContent());
     }
