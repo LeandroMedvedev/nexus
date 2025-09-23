@@ -43,7 +43,7 @@ public class OrderService {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(itemDto.quantity());
-            orderItem.setUnitPrice(product.getPrice());  // Usar o preço do banco.
+            orderItem.setUnitPrice(product.getPrice());  // Usa o preço do banco.
 
             order.addItem(orderItem);  // Adiciona o item ao pedido e estabelece a relação bidirecional
 
@@ -70,8 +70,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponseDTO getOrderById(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
+        Order order = findOrderById(id);
         return new OrderResponseDTO(order);
     }
 
@@ -81,5 +80,27 @@ public class OrderService {
         return orderRepository.findByCustomerId(customerId).stream()
                 .map(OrderResponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OrderResponseDTO cancelOrder(Long id) {
+        // 1. Buscar o pedido.
+        Order order = findOrderById(id);
+
+        // 2. Validar Estado. Só permite o cancelamento se o status for adequado.
+        if (!"PENDING_PAYMENT".equals(order.getStatus())) {
+            throw new IllegalStateException("Order cannot be canceled because it is already in status: " + order.getStatus());
+        }
+
+        // 3. Transição de Estado.
+        order.setStatus("CANCELLED");
+
+        Order cancelledOrder = orderRepository.save(order);
+        return new OrderResponseDTO(cancelledOrder);
+    }
+
+    private Order findOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
     }
 }

@@ -38,4 +38,10 @@ public class OrderController {
     public ResponseEntity<List<OrderResponseDTO>> getOrdersByCustomerId(@PathVariable Long customerId) {
         return ResponseEntity.ok(orderService.getOrdersByCustomerId(customerId));
     }
+
+    @PostMapping("/{id}/cancel")  // ENDPOINT DE AÇÃO
+    public ResponseEntity<OrderResponseDTO> cancelOrder(@PathVariable Long id) {
+        OrderResponseDTO cancelledOrder = orderService.cancelOrder(id);
+        return ResponseEntity.ok(cancelledOrder);
+    }
 }
