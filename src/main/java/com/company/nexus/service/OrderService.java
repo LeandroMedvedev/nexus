@@ -25,7 +25,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO requestDTO) {
-        // Buscar as entidades principais
+        // 1. Buscar as entidades principais
         Customer customer = customerService.findCustomerById(requestDTO.customerId());
 
         Employee employee = null;
@@ -52,7 +52,7 @@ public class OrderService {
             );
         }
 
-        // Montar e persistir o pedido
+        // 3. Montar e persistir o pedido
         order.setCustomer(customer);
         order.setEmployee(employee);
         order.setOrderDate(LocalDateTime.now());
@@ -73,5 +73,13 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
         return new OrderResponseDTO(order);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponseDTO> getOrdersByCustomerId(Long customerId) {
+        customerService.findCustomerById(customerId);
+        return orderRepository.findByCustomerId(customerId).stream()
+                .map(OrderResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }
