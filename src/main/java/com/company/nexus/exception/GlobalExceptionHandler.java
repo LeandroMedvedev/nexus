@@ -31,4 +31,15 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalState(IllegalStateException ex) {
+        var errorResponse = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                // 409 Conflict é um bom status para uma ação que não pode ser executada no estado atual do recurso.
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }
