@@ -1,4 +1,4 @@
-# Nexus API - Teste de Performance 3
+# Nexus API
 
 ## 📝 Descrição do Projeto
 
@@ -80,7 +80,7 @@ A estratégia de testes adotada foi focada em **testes de integração** para a 
    ```
 2. Navegue até a pasta do projeto:
    ```bash
-   cd nexus-api
+   cd nexus
    ```
 3. Execute a aplicação:
    ```bash
@@ -143,5 +143,6 @@ A seguir, exemplos de como interagir com o endpoint de `Customers`. O mesmo padr
   ```
 
 ## ✒️ Autor
+
 
 **[Leandro Medvedev]**
